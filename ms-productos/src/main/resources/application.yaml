@@ -6,6 +6,6 @@ spring:
     name: ms-pedidos
 
   r2dbc:
-    url: r2dbc:postgresql://${DB_HOST:db.mpfpbdyxlaawonjhhikw.supabase.co}:${DB_PORT:5432}/${DB_NAME:postgres}?sslMode=${DB_SSL_MODE:require}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:-kbE.8h6Un-EmmN}
+    url: r2dbc:postgresql://${DB_HOST:ep-rough-violet-adi6ri0k-pooler.c-2.us-east-1.aws.neon.tech}:${DB_PORT:5432}/${DB_NAME:redesinalambricas}?sslMode=${DB_SSL_MODE:require}
+    username: ${DB_USER:neondb_owner}
+    password: ${DB_PASSWORD:npg_pHT4NJx3gnSG}

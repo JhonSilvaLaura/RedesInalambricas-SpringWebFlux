@@ -33,15 +33,17 @@ public class PedidoService implements IPedidoServicePort {
 
     @Override
     public Mono<Pedido> create(Pedido order) {
-        return productoClientPort.findById(order.getId())
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no encontrado")))
+        Long productId = Long.parseLong(order.getProductId());
+        return productoClientPort.findById(productId)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado")))
                 .flatMap(product -> {
-                    if (product.getStock()< order.getQuantity()){
+                    if (product.getStock() < order.getQuantity()){
                         return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Stock insuficiente"));
                     }
 
-                    return productoClientPort.decreaseStock(order.getId(), order.getQuantity())
+                    return productoClientPort.decreaseStock(productId, order.getQuantity())
                             .flatMap(updated -> {
+                                order.setPrice(product.getPrice());
                                 order.setTotal(product.getPrice() * order.getQuantity());
                                 order.setStatus("CONFIRMADO");
                                 order.setFecha(LocalDateTime.now());
@@ -52,9 +54,17 @@ public class PedidoService implements IPedidoServicePort {
 
     @Override
     public Mono<Pedido> cancel(Long id) {
-        return findById(id)
-                .flatmap(oder -> {
-                    order
-                })
+        return finById(id)
+                .flatMap(order -> {
+                    if (!"CONFIRMADO".equals(order.getStatus())) {
+                        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Solo se pueden cancelar pedidos confirmados"));
+                    }
+                    
+                    return productoClientPort.increaseStock(Long.parseLong(order.getProductId()), order.getQuantity())
+                            .flatMap(updated -> {
+                                order.setStatus("CANCELADO");
+                                return repositoryPort.save(order);
+                            });
+                });
     }
 }

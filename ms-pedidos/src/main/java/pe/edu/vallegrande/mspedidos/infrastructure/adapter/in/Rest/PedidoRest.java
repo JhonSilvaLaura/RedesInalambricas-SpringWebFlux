@@ -27,5 +27,12 @@ public class PedidoRest {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public
+    public Mono<Pedido> create(@RequestBody Pedido pedido) {
+        return servicePort.create(pedido);
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<Pedido> cancel(@PathVariable Long id) {
+        return servicePort.cancel(id);
+    }
 }

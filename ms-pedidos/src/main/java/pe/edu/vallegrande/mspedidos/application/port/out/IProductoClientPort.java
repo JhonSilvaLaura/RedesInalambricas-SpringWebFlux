@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 public interface IProductoClientPort {
     Mono<Producto> findById(Long id);
     Mono<Producto> decreaseStock(Long id, Integer quantity);
+    Mono<Producto> increaseStock(Long id, Integer quantity);
 }
